@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // A family group is a document under /households/{code}.
+    // Anyone signed in (anonymously) who knows the code can read/write that group.
+    // The list of all households can NOT be read, so codes can't be enumerated.
+    match /households/{hid} {
+      allow get, create: if request.auth != null;
+
+      match /{document=**} {
+        allow read, write: if request.auth != null;
+      }
+    }
+  }
+}
